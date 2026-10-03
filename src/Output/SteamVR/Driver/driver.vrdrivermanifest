@@ -1,0 +1,7 @@
+{
+    "alwaysActivate": true,
+    "name": "openfbt",
+    "directory": "",
+    "resourceOnly": false,
+    "hmd_presence": []
+}

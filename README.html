@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>OpenFBT setup guide</title>
+<style>
+  :root {
+    --bg: #eef3f6;
+    --panel: #ffffff;
+    --ink: #14232e;
+    --muted: #4d6170;
+    --line: #cbd8e0;
+    --accent: #1f5fe0;
+    --accent-soft: #dbe7fd;
+    --code-bg: #14232e;
+    --code-ink: #e6f0f6;
+    --note-bg: #fff4d6;
+    --note-line: #e0a100;
+    color-scheme: light dark;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0f1a22;
+      --panel: #16252f;
+      --ink: #e4eef4;
+      --muted: #9db2c0;
+      --line: #2a3f4d;
+      --accent: #6c9bff;
+      --accent-soft: #1d3358;
+      --code-bg: #0a1319;
+      --code-ink: #e6f0f6;
+      --note-bg: #2e2810;
+      --note-line: #d9a519;
+    }
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: "Segoe UI Variable Text", "Segoe UI", system-ui, -apple-system, sans-serif;
+    font-size: 17px;
+    line-height: 1.65;
+  }
+  .wrap { max-width: 880px; margin: 0 auto; padding: 0 22px 80px; }
+
+  header {
+    display: grid;
+    grid-template-columns: 1fr 150px;
+    gap: 32px;
+    align-items: center;
+    padding: 64px 0 40px;
+    border-bottom: 2px solid var(--ink);
+  }
+  h1 {
+    margin: 0 0 14px;
+    font-family: "Segoe UI Variable Display", "Segoe UI", system-ui, sans-serif;
+    font-size: clamp(2.2rem, 6vw, 3.4rem);
+    font-weight: 700;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+  }
+  .lede { margin: 0; max-width: 46ch; color: var(--muted); font-size: 1.1rem; }
+  .figure { width: 150px; height: auto; color: var(--ink); }
+  .figure .bone { stroke: currentColor; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; fill: none; }
+  .figure .dot { fill: var(--accent); stroke: var(--bg); stroke-width: 3; }
+
+  nav { padding: 22px 0 6px; display: flex; flex-wrap: wrap; gap: 8px 18px; font-size: 0.95rem; }
+  nav a { color: var(--accent); text-decoration: none; border-bottom: 1px solid transparent; }
+  nav a:hover, nav a:focus-visible { border-bottom-color: currentColor; outline: none; }
+
+  section { padding-top: 40px; }
+  h2 {
+    margin: 0 0 12px;
+    font-family: "Segoe UI Variable Display", "Segoe UI", system-ui, sans-serif;
+    font-size: 1.6rem;
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+  }
+  p { margin: 0 0 16px; max-width: 68ch; }
+  ul { margin: 0 0 16px; padding-left: 1.2em; max-width: 68ch; }
+  li { margin-bottom: 6px; }
+
+  pre {
+    margin: 4px 0 20px;
+    padding: 16px 18px;
+    background: var(--code-bg);
+    color: var(--code-ink);
+    border-radius: 6px;
+    overflow-x: auto;
+    font-family: "Cascadia Mono", Consolas, "Courier New", monospace;
+    font-size: 0.9rem;
+    line-height: 1.55;
+    max-width: 100%;
+  }
+  code {
+    font-family: "Cascadia Mono", Consolas, "Courier New", monospace;
+    font-size: 0.88em;
+    background: var(--accent-soft);
+    padding: 1px 6px;
+    border-radius: 4px;
+  }
+  pre code { background: none; padding: 0; font-size: inherit; }
+
+  .note {
+    margin: 8px 0 18px;
+    padding: 14px 18px;
+    background: var(--note-bg);
+    border-left: 4px solid var(--note-line);
+    border-radius: 0 6px 6px 0;
+    max-width: 68ch;
+  }
+  .note p { margin: 0; }
+
+  .tracker-list {
+    list-style: none;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+    gap: 8px 20px;
+    max-width: none;
+  }
+  .tracker-list li {
+    margin: 0;
+    padding: 8px 0 8px 22px;
+    border-bottom: 1px solid var(--line);
+    position: relative;
+  }
+  .tracker-list li::before {
+    content: "";
+    position: absolute;
+    left: 2px; top: 17px;
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    background: var(--accent);
+  }
+
+  footer { margin-top: 56px; padding-top: 18px; border-top: 1px solid var(--line); color: var(--muted); font-size: 0.92rem; }
+
+  @media (max-width: 640px) {
+    header { grid-template-columns: 1fr; padding-top: 40px; }
+    .figure { width: 110px; order: -1; }
+    body { font-size: 16px; }
+  }
+  @media print {
+    body { background: #fff; color: #000; }
+    pre { border: 1px solid #999; background: #f3f3f3; color: #000; }
+    nav { display: none; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <div>
+    <h1>OpenFBT setup guide</h1>
+    <p class="lede">Build the SteamVR driver, start the tracker app, and get eight body trackers from one webcam.</p>
+  </div>
+  <svg class="figure" viewBox="0 0 160 250" role="img" aria-label="Stick figure with the eight tracker positions marked: hips, chest, both knees, both feet and both elbows">
+    <circle class="bone" cx="80" cy="26" r="14"/>
+    <path class="bone" d="M80 40 V130"/>
+    <path class="bone" d="M56 58 H104"/>
+    <path class="bone" d="M56 58 L46 96 L40 130"/>
+    <path class="bone" d="M104 58 L114 96 L120 130"/>
+    <path class="bone" d="M68 130 H92"/>
+    <path class="bone" d="M68 130 L64 178 L60 224 L46 234"/>
+    <path class="bone" d="M92 130 L96 178 L100 224 L114 234"/>
+    <circle class="dot" cx="80" cy="130" r="8"/>
+    <circle class="dot" cx="80" cy="74" r="8"/>
+    <circle class="dot" cx="64" cy="178" r="8"/>
+    <circle class="dot" cx="96" cy="178" r="8"/>
+    <circle class="dot" cx="60" cy="224" r="8"/>
+    <circle class="dot" cx="100" cy="224" r="8"/>
+    <circle class="dot" cx="46" cy="96" r="8"/>
+    <circle class="dot" cx="114" cy="96" r="8"/>
+  </svg>
+</header>
+
+<nav aria-label="Sections">
+  <a href="#needs">What you need</a>
+  <a href="#build">Build the driver</a>
+  <a href="#register">Register it with SteamVR</a>
+  <a href="#run">Run it</a>
+  <a href="#camera">Camera and alignment</a>
+</nav>
+
+<section id="needs">
+  <h2>What you need</h2>
+  <p>A Windows PC with SteamVR installed, Python, CMake, and the Visual Studio Build Tools with the "Desktop development with C++" workload. You also need a webcam that can see your whole body.</p>
+  <p>Open a terminal in the OpenFBT folder and install the Python packages:</p>
+  <pre><code>pip install -r requirements.txt</code></pre>
+</section>
+
+<section id="build">
+  <h2>Build the driver</h2>
+  <p>Run these two commands from the repo root. The first configures the build and the second compiles it.</p>
+  <pre><code>cmake -S make -B build -A x64
+cmake --build build --config Release</code></pre>
+  <p>When it finishes you will have a folder at <code>build\openfbt</code>. It holds the driver manifest, the settings file and <code>bin\win64\driver_openfbt.dll</code>, laid out the way SteamVR expects. You only rebuild if the C++ code changes.</p>
+</section>
+
+<section id="register">
+  <h2>Register it with SteamVR</h2>
+  <p>SteamVR needs to know where the driver lives. Open a terminal in SteamVR's <code>bin\win64</code> folder, which is normally inside <code>C:\Program Files (x86)\Steam\steamapps\common\SteamVR</code>, and run <code>vrpathreg.exe</code> with the full path to your build folder in quotes:</p>
+  <pre><code>vrpathreg.exe adddriver "C:\path\to\OpenFBT\build\openfbt"</code></pre>
+  <p>If you would rather not use vrpathreg, copy the whole <code>openfbt</code> folder into SteamVR's <code>drivers</code> folder instead. Either way you only do this once.</p>
+</section>
+
+<section id="run">
+  <h2>Run it</h2>
+  <p>Start SteamVR first and put your headset on. The driver loads when SteamVR starts. Then start the app from the repo root:</p>
+  <pre><code>python -m src.main</code></pre>
+  <p>A preview window opens with your skeleton drawn over the camera image. Stand upright with your whole body in view, feet included, and press <b>C</b> to calibrate. It samples for two seconds to find the floor. Press <b>Q</b> to quit.</p>
+  <p>As soon as the app starts sending, eight trackers appear in the SteamVR status window:</p>
+  <ul class="tracker-list">
+    <li>Hips (waist)</li>
+    <li>Chest</li>
+    <li>Left foot</li>
+    <li>Right foot</li>
+    <li>Left knee</li>
+    <li>Right knee</li>
+    <li>Left elbow</li>
+    <li>Right elbow</li>
+  </ul>
+  <p>The app sends to the SteamVR driver by default. To send to VRChat's OSC trackers instead, add <code>--output osc</code>. To send to both, add <code>--output both</code>.</p>
+</section>
+
+<section id="camera">
+  <h2>Camera and alignment</h2>
+  <p>Put the camera in front of you at roughly waist height, a couple of metres back, so it sees you from head to toe.</p>
+  <p>The tracker space is not yet aligned to your SteamVR play space, so recentre SteamVR first. Stand in the middle of your play area facing the camera, with the camera in the direction you face when you recentre. Then calibrate in your game, for example in VRChat's tracking settings in SteamVR mode, so the trackers sit close enough to your body to bind.</p>
+  <div class="note">
+    <p>If the trackers appear offset or rotated, that is the missing alignment between the camera and your headset. It can be fixed with an extra calibration step that lines the camera space up with the headset.</p>
+  </div>
+</section>
+
+<footer>
+  The driver listens on UDP port 43210 on localhost. To change it, edit <code>resources\settings\default.vrsettings</code> and pass <code>--steamvr-port</code> to the app with the same number.
+</footer>
+
+</div>
+</body>
+</html>
